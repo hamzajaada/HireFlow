@@ -22,7 +22,7 @@ hire-flow/
 ├── pom.xml                  POM parent (versions, liste des modules)
 ├── common-events/           DTO des événements Kafka partagés + noms des topics
 ├── config-server/           Spring Cloud Config Server (port 8888)          membre 1
-├── config-repo/             Fichiers de configuration servis par le Config Server
+│   └── src/main/resources/config-repo/   Configuration de chaque service (ports, BDD, Kafka, routes)
 ├── discovery-server/        Annuaire Eureka (port 8761)                     membre 2
 ├── api-gateway/             API Gateway (port 8080)                         membre 3
 ├── service-offres/          JobOffer, RequiredSkill (port 8081, db_offres)  membre 1
@@ -41,8 +41,8 @@ Chaque service suit la même organisation de packages :
 
 - Les 6 entités du MCD avec leurs repositories, les enums `OfferStatus` (OUVERTE, POURVUE) et `ApplicationStatus` (DEPOSEE, EN_ENTRETIEN, RETENUE, REFUSEE).
 - Les 3 événements Kafka (`ApplicationSubmittedEvent`, `InterviewCompletedEvent`, `ApplicationAcceptedEvent`) et les noms de topics dans `common-events`.
-- Config Server en mode `native` qui lit `config-repo/`, Eureka, Gateway avec les routes vers les 3 services.
-- La configuration JPA, PostgreSQL, Kafka (sérialisation JSON) et Eureka de chaque service dans `config-repo/`.
+- Config Server en mode `native` qui lit `config-server/src/main/resources/config-repo/`, Eureka, Gateway avec les routes vers les 3 services.
+- La configuration JPA, PostgreSQL, Kafka (sérialisation JSON) et Eureka de chaque service dans ce même dossier `config-repo/`.
 
 Reste à faire par chaque membre : les services métier, les contrôleurs REST, les clients Feign, les producteurs et consommateurs Kafka, les tests. Voir le dossier projet pour la répartition.
 
@@ -57,13 +57,14 @@ Reste à faire par chaque membre : les services métier, les contrôleurs REST, 
    ```bash
    ./mvnw clean install
    ```
-3. Lancer les applications **dans cet ordre**, depuis la racine du dépôt (le Config Server lit `./config-repo`) :
+3. Lancer les applications **dans cet ordre** (le Config Server doit être démarré en premier, sinon les services refusent de démarrer) :
    1. `config-server`
    2. `discovery-server`
    3. `service-offres`, `service-talents`, `service-candidatures`
    4. `api-gateway`
 
-   Par exemple : `./mvnw -pl config-server spring-boot:run`, ou le bouton Run de l'IDE (répertoire de travail = racine du projet).
+   Par exemple avec le bouton Run d'IntelliJ, ou `./mvnw -pl config-server spring-boot:run`.
+   Après une modification dans `config-repo/`, redémarrer le Config Server puis le service concerné.
 4. Vérifier dans Eureka (http://localhost:8761) que les services sont enregistrés, puis passer par la Gateway : http://localhost:8080/offers, `/applications`, `/candidates`.
 
 ## Contrats partagés (à ne pas changer sans prévenir l'équipe)

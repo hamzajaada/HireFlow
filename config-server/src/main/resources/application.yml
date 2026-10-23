@@ -10,6 +10,7 @@ spring:
     config:
       server:
         native:
-          # Les fichiers de configuration des services sont dans config-repo/ a la racine du depot.
-          # Lancer le Config Server depuis la racine du projet, ou surcharger CONFIG_REPO_PATH.
-          search-locations: ${CONFIG_REPO_PATH:file:./config-repo}
+          # Les fichiers de configuration des services sont dans src/main/resources/config-repo/.
+          # Ils sont lus depuis le classpath : ca marche quel que soit le repertoire de lancement
+          # (IntelliJ, mvn, java -jar). Apres une modification, redemarrer le Config Server.
+          search-locations: ${CONFIG_REPO_PATH:classpath:/config-repo}
