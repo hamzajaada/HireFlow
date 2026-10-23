@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: service-offres
+              uri: lb://service-offres
+              predicates:
+                - Path=/offers/**
+            - id: service-candidatures
+              uri: lb://service-candidatures
+              predicates:
+                - Path=/applications/**,/interviews/**
+            - id: service-talents
+              uri: lb://service-talents
+              predicates:
+                - Path=/candidates/**

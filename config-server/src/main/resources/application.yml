@@ -1,0 +1,15 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          # Les fichiers de configuration des services sont dans config-repo/ a la racine du depot.
+          # Lancer le Config Server depuis la racine du projet, ou surcharger CONFIG_REPO_PATH.
+          search-locations: ${CONFIG_REPO_PATH:file:./config-repo}
