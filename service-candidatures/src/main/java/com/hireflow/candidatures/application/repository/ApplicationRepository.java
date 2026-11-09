@@ -1,6 +1,6 @@
 package com.hireflow.candidatures.application.repository;
 
-import com.hireflow.candidatures.application.entity.Application;
+import com.hireflow.candidatures.application.entite.Application;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 

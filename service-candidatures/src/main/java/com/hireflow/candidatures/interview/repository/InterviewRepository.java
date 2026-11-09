@@ -1,6 +1,6 @@
 package com.hireflow.candidatures.interview.repository;
 
-import com.hireflow.candidatures.interview.entity.Interview;
+import com.hireflow.candidatures.interview.entite.Interview;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
