@@ -1,6 +1,6 @@
 package com.hireflow.offres.repository;
 
-import com.hireflow.offres.entity.RequiredSkill;
+import com.hireflow.offres.entite.RequiredSkill;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 

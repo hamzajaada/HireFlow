@@ -1,6 +1,6 @@
 package com.hireflow.talents.repository;
 
-import com.hireflow.talents.entity.Candidate;
+import com.hireflow.talents.entite.Candidate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 

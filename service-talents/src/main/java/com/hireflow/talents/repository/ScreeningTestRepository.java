@@ -1,6 +1,6 @@
 package com.hireflow.talents.repository;
 
-import com.hireflow.talents.entity.ScreeningTest;
+import com.hireflow.talents.entite.ScreeningTest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
