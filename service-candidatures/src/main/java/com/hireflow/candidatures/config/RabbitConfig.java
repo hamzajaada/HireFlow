@@ -1,6 +1,12 @@
 package com.hireflow.candidatures.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
@@ -18,6 +24,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfig {
 
+    private static final Logger log = LoggerFactory.getLogger(RabbitConfig.class);
+
     public static final String EXCHANGE = "hireflow.events";
 
     public static final String RK_APPLICATION_SUBMITTED = "application.submitted";
@@ -32,5 +40,23 @@ public class RabbitConfig {
     @Bean
     public MessageConverter jsonMessageConverter(ObjectMapper objectMapper) {
         return new Jackson2JsonMessageConverter(objectMapper);
+    }
+
+    /**
+     * Cree l'exchange, les files et les liaisons des le demarrage (sinon RabbitMQ ne les cree
+     * qu'au premier envoi ou a la premiere ecoute). Si RabbitMQ n'est pas lance, le service
+     * demarre quand meme et les cree a la premiere connexion.
+     */
+    @Bean
+    public ApplicationRunner declarerRabbit(AmqpAdmin amqpAdmin) {
+        return args -> {
+            try {
+                if (amqpAdmin instanceof RabbitAdmin rabbitAdmin) {
+                    rabbitAdmin.initialize();
+                }
+            } catch (AmqpException e) {
+                log.warn("RabbitMQ injoignable au demarrage ({}) : lancer docker compose up -d", e.getMessage());
+            }
+        };
     }
 }
