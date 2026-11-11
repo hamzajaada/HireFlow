@@ -1,0 +1,10 @@
+{
+  "candidateId": 3,
+  "nom": "Youssef Alaoui",
+  "email": "youssef@email.com",
+  "experienceAnnees": 1,
+  "statut": "EN_PROCESSUS",
+  "dernierTest": "Java",
+  "dernierScore": 55,
+  "nombreTests": 1
+}
