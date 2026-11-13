@@ -24,3 +24,6 @@ dist/
 .angular/
 
 .env
+
+# fichiers de test locaux (non versionnes)
+scratch/
