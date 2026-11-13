@@ -78,6 +78,26 @@ public class ApplicationService {
         return ApplicationResponse.from(getEntity(id));
     }
 
+    /** Décision du RH : RG6 à RG9. */
+    public ApplicationResponse decider(Long id, ApplicationStatus decision) {
+        if (decision != ApplicationStatus.RETENUE && decision != ApplicationStatus.REFUSEE) {
+            throw new IllegalArgumentException("seules les décisions RETENUE ou REFUSEE sont acceptées");
+        }
+        Application app = getEntity(id);
+        if (app.getStatut() != ApplicationStatus.EN_ENTRETIEN) {
+            throw new BusinessException("Transition " + app.getStatut() + " -> " + decision
+                    + " interdite : la candidature doit être EN_ENTRETIEN");
+        }
+        if (decision == ApplicationStatus.RETENUE
+                && applications.existsByOfferIdAndStatut(app.getOfferId(), ApplicationStatus.RETENUE)) {
+            throw new BusinessException("Un candidat est déjà retenu pour l'offre " + app.getOfferId());
+        }
+        ApplicationStatus avant = app.getStatut();
+        app.setStatut(decision);
+        springEvents.publishEvent(new StatusChange(id, avant, decision, LocalDateTime.now())); // temps réel
+        return ApplicationResponse.from(app);
+    }
+
     /** Appelé par Abderahman quand il planifie un entretien (RG10). Écrit ensemble au kick-off. */
     public Application passerEnEntretien(Long id) {
         Application app = getEntity(id);
