@@ -1,0 +1,10 @@
+{
+  "offerId": 3,
+  "statut": "POURVUE",
+  "ouverte": false,
+  "competencesCouvertes": false,
+  "competencesManquantes": [
+    { "nom": "Comptabilite generale", "niveauMinimum": 4, "niveauCandidat": null }
+  ],
+  "eligible": false
+}
