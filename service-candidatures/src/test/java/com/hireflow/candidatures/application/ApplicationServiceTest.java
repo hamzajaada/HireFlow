@@ -7,6 +7,7 @@ import com.hireflow.candidatures.application.dto.ApplicationRequest;
 import com.hireflow.candidatures.application.dto.DeclaredSkill;
 import com.hireflow.candidatures.application.entite.Application;
 import com.hireflow.candidatures.application.enums.ApplicationStatus;
+import com.hireflow.candidatures.application.messaging.ApplicationEventProducer;
 import com.hireflow.candidatures.application.repository.ApplicationRepository;
 import com.hireflow.candidatures.application.service.ApplicationService;
 import com.hireflow.candidatures.common.BusinessException;
@@ -37,6 +38,7 @@ class ApplicationServiceTest {
     @Mock ApplicationRepository applications;
     @Mock OffreClient offreClient;
     @Mock ApplicationEventPublisher springEvents;
+    @Mock ApplicationEventProducer events;
     @InjectMocks ApplicationService service;
 
     private final ApplicationRequest req = new ApplicationRequest(1L, "Amine@Email.com",
@@ -74,6 +76,7 @@ class ApplicationServiceTest {
 
         assertEquals(ApplicationStatus.DEPOSEE, res.statut());
         assertEquals("amine@email.com", res.candidatEmail());
+        verify(events).applicationSubmitted(any());
     }
 
     @Test
@@ -102,6 +105,7 @@ class ApplicationServiceTest {
 
         assertEquals(ApplicationStatus.RETENUE, res.statut());
         verify(springEvents).publishEvent(any(StatusChange.class));
+        verify(events).applicationAccepted(app);
     }
 
     @Test

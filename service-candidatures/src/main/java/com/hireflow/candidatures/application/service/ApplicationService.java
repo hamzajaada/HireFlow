@@ -8,6 +8,7 @@ import com.hireflow.candidatures.application.dto.ApplicationResponse;
 import com.hireflow.candidatures.application.dto.DeclaredSkill;
 import com.hireflow.candidatures.application.entite.Application;
 import com.hireflow.candidatures.application.enums.ApplicationStatus;
+import com.hireflow.candidatures.application.messaging.ApplicationEventProducer;
 import com.hireflow.candidatures.application.repository.ApplicationRepository;
 import com.hireflow.candidatures.common.BusinessException;
 import com.hireflow.candidatures.common.RejectedApplicationException;
@@ -30,6 +31,7 @@ public class ApplicationService {
 
     private final ApplicationRepository applications;
     private final OffreClient offreClient;                  // le vrai Feign, ou OffreClientFake avec le profil "fake"
+    private final ApplicationEventProducer events;          // RabbitMQ (sprint 2)
     private final ApplicationEventPublisher springEvents;   // fourni par Spring : pour le temps réel d'Abderahman
 
     /** Dépôt : RG1 à RG5. */
@@ -61,6 +63,7 @@ public class ApplicationService {
                 .lettreMotivation(req.lettreMotivation())
                 .date(LocalDate.now())
                 .build());                                  // statut = DEPOSEE par défaut
+        events.applicationSubmitted(app);                   // sprint 2 : prévient Douae
         return ApplicationResponse.from(app);
     }
 
@@ -95,6 +98,9 @@ public class ApplicationService {
         ApplicationStatus avant = app.getStatut();
         app.setStatut(decision);
         springEvents.publishEvent(new StatusChange(id, avant, decision, LocalDateTime.now())); // temps réel
+        if (decision == ApplicationStatus.RETENUE) {
+            events.applicationAccepted(app);                // sprint 2 : prévient Hamza et Douae
+        }
         return ApplicationResponse.from(app);
     }
 
