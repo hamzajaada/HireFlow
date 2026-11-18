@@ -1,0 +1,5 @@
+package com.hireflow.offres.dto;
+import java.time.LocalDateTime;
+/** Format d'erreur commun aux 3 services. */
+public record ApiError(LocalDateTime timestamp, int status, String error, String message, String path) {
+}

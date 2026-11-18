@@ -1,5 +1,7 @@
 package com.hireflow.talents.entite;
 
+import com.hireflow.talents.enums.CandidateStatus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,10 @@ public class Candidate {
 
     private Integer experienceAnnees;
 
-    private String statut;
+    /** Était un String dans le squelette : devient l'enum, rangé en texte lisible ("EVALUE"). */
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private CandidateStatus statut = CandidateStatus.NOUVEAU;
 
     @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
