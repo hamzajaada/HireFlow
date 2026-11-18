@@ -1,0 +1,10 @@
+{
+  "candidateId": 2,
+  "nom": "Sara Bennani",
+  "email": "sara@email.com",
+  "experienceAnnees": 5,
+  "statut": "EN_PROCESSUS",
+  "dernierTest": "Angular",
+  "dernierScore": 85,
+  "nombreTests": 1
+}

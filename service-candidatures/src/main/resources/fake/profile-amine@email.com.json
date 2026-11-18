@@ -1,0 +1,10 @@
+{
+  "candidateId": 1,
+  "nom": "Amine Jamali",
+  "email": "amine@email.com",
+  "experienceAnnees": 3,
+  "statut": "EN_PROCESSUS",
+  "dernierTest": "Java",
+  "dernierScore": 78,
+  "nombreTests": 1
+}
