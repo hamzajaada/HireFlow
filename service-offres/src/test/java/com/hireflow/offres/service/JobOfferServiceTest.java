@@ -49,4 +49,36 @@ class JobOfferServiceTest {
         assertThrows(BusinessException.class,
                 () -> service.update(3L, new JobOfferRequest("Autre", null, null, null, null)));
     }
+
+    @Test
+    void entretienNote_metAJourLaMoyenne() {                              // RG8
+        JobOffer offer = JobOffer.builder().id(1L).intitule("Java").build();
+        when(offers.findById(1L)).thenReturn(Optional.of(offer));
+
+        service.enregistrerEntretien(1L, 16);
+        service.enregistrerEntretien(1L, 12);
+
+        assertEquals(2, offer.getNombreEntretiens());
+        assertEquals(14.0, offer.getNoteMoyenne());
+    }
+
+    @Test
+    void candidatureRetenue_fermeLOffre() {                               // RG9
+        JobOffer offer = JobOffer.builder().id(1L).intitule("Java").build();
+        when(offers.findById(1L)).thenReturn(Optional.of(offer));
+
+        service.cloturer(1L);
+
+        assertEquals(OfferStatus.POURVUE, offer.getStatut());
+    }
+
+    @Test
+    void candidatureRetenue_deuxFois_sansErreur() {                       // RG10
+        JobOffer offer = JobOffer.builder().id(1L).intitule("Java").statut(OfferStatus.POURVUE).build();
+        when(offers.findById(1L)).thenReturn(Optional.of(offer));
+
+        service.cloturer(1L);                                             // même message reçu une 2e fois
+
+        assertEquals(OfferStatus.POURVUE, offer.getStatut());
+    }
 }
