@@ -1,7 +1,7 @@
 
 # Infrastructure locale de Hire-Flow.
 #   docker compose up -d                       -> RabbitMQ seul (pour développer depuis l'IDE)
-#   docker compose --profile apps up -d --build -> RabbitMQ + les 6 applications (démo)
+#   docker compose --profile apps up -d --build -> RabbitMQ + les 7 applications (démo)
 # Console RabbitMQ : http://localhost:15672 (hireflow / hireflow)
 x-app: &app
   profiles: ["apps"]
@@ -58,4 +58,10 @@ services:
     <<: *app
     build: { context: ., args: { MODULE: service-talents } }
     ports: ["8083:8083"]
+    depends_on: [config-server, service-registry, rabbitmq]
+
+  service-notification:
+    <<: *app
+    build: { context: ., args: { MODULE: service-notification } }
+    ports: ["8084:8084"]
     depends_on: [config-server, service-registry, rabbitmq]
