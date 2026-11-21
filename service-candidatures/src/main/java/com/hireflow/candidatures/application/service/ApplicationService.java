@@ -3,6 +3,7 @@ package com.hireflow.candidatures.application.service;
 import com.hireflow.candidatures.application.client.EligibilityRequest;
 import com.hireflow.candidatures.application.client.EligibilityResponse;
 import com.hireflow.candidatures.application.client.OffreClient;
+import com.hireflow.candidatures.application.dto.ApplicationCard;
 import com.hireflow.candidatures.application.dto.ApplicationRequest;
 import com.hireflow.candidatures.application.dto.ApplicationResponse;
 import com.hireflow.candidatures.application.dto.DeclaredSkill;
@@ -21,7 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -74,6 +78,19 @@ public class ApplicationService {
                 .filter(a -> statut == null || a.getStatut() == statut)
                 .map(ApplicationResponse::from)
                 .toList();
+    }
+
+    /** Données du Kanban : les 4 colonnes, même vides. */
+    @Transactional(readOnly = true)
+    public Map<ApplicationStatus, List<ApplicationCard>> pipeline(Long offerId) {
+        Map<ApplicationStatus, List<ApplicationCard>> colonnes = new EnumMap<>(ApplicationStatus.class);
+        for (ApplicationStatus s : ApplicationStatus.values()) {
+            colonnes.put(s, new ArrayList<>());
+        }
+        applications.findAll().stream()
+                .filter(a -> offerId == null || a.getOfferId().equals(offerId))
+                .forEach(a -> colonnes.get(a.getStatut()).add(ApplicationCard.from(a)));
+        return colonnes;
     }
 
     @Transactional(readOnly = true)

@@ -51,6 +51,7 @@ class ApplicationServiceTest {
 
         assertThrows(RejectedApplicationException.class, () -> service.deposer(req));
         verify(applications, never()).save(any());
+        verify(events, never()).applicationSubmitted(any());
     }
 
     @Test
@@ -93,6 +94,7 @@ class ApplicationServiceTest {
         when(applications.findById(12L)).thenReturn(Optional.of(app));
 
         assertThrows(BusinessException.class, () -> service.decider(12L, ApplicationStatus.RETENUE));
+        verify(events, never()).applicationAccepted(any());
     }
 
     @Test
@@ -127,5 +129,17 @@ class ApplicationServiceTest {
 
         assertEquals(ApplicationStatus.EN_ENTRETIEN, app.getStatut());
         verify(springEvents).publishEvent(any(StatusChange.class));
+    }
+
+    @Test
+    void pipeline_renvoieLes4Colonnes_memeVides() {                        // Kanban
+        Application a = Application.builder().id(2L).offerId(2L).candidatEmail("sara@email.com").build();
+        when(applications.findAll()).thenReturn(List.of(a));
+
+        var colonnes = service.pipeline(null);
+
+        assertEquals(4, colonnes.size());
+        assertEquals(1, colonnes.get(ApplicationStatus.DEPOSEE).size());
+        assertEquals(0, colonnes.get(ApplicationStatus.RETENUE).size());
     }
 }
