@@ -1,6 +1,6 @@
 
 # Infrastructure locale de Hire-Flow.
-#   docker compose up -d                       -> RabbitMQ seul (pour développer depuis l'IDE)
+#   docker compose up -d                       -> RabbitMQ + Mailpit (pour développer depuis l'IDE)
 #   docker compose --profile apps up -d --build -> RabbitMQ + les 7 applications (démo)
 # Console RabbitMQ : http://localhost:15672 (hireflow / hireflow)
 x-app: &app
@@ -21,6 +21,15 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+
+  # Serveur SMTP de test : recoit les emails de service-notification (port 1025),
+  # boite de reception web : http://localhost:8025
+  mailpit:
+    image: axllent/mailpit
+    container_name: hireflow-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
 
   config-server:
     <<: *app
@@ -64,4 +73,7 @@ services:
     <<: *app
     build: { context: ., args: { MODULE: service-notification } }
     ports: ["8084:8084"]
-    depends_on: [config-server, service-registry, rabbitmq]
+    depends_on: [config-server, service-registry, rabbitmq, mailpit]
+    environment:
+      <<: *env
+      MAIL_HOST: mailpit           # le nom du conteneur, pas localhost
