@@ -1,7 +1,16 @@
-# Infrastructure locale de Hire-Flow : uniquement RabbitMQ
-# (les bases sont en H2 en memoire, dans chaque service : rien a installer).
-# Demarrage : docker compose up -d
-# Console d'administration : http://localhost:15672 (hireflow / hireflow)
+
+# Infrastructure locale de Hire-Flow.
+#   docker compose up -d                       -> RabbitMQ seul (pour développer depuis l'IDE)
+#   docker compose --profile apps up -d --build -> RabbitMQ + les 6 applications (démo)
+# Console RabbitMQ : http://localhost:15672 (hireflow / hireflow)
+x-app: &app
+  profiles: ["apps"]
+  restart: on-failure        # si le Config Server n'est pas encore prêt, le service redémarre
+  environment: &env
+    CONFIG_SERVER_URL: http://config-server:8888
+    EUREKA_URL: http://service-registry:8761/eureka/
+    RABBITMQ_HOST: rabbitmq # le nom du conteneur, pas localhost
+
 services:
   rabbitmq:
     image: rabbitmq:4-management
@@ -12,3 +21,41 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+
+  config-server:
+    <<: *app
+    build: { context: ., args: { MODULE: config-server } }
+    ports: ["8888:8888"]
+    environment:
+      CONFIG_REPO_PATH: file:/config-repo/
+    volumes:
+      - ./config-repo:/config-repo:ro   # le dossier config-repo/ du dépôt, monté dans le conteneur
+
+  service-registry:
+    <<: *app
+    build: { context: ., args: { MODULE: service-registry } }
+    ports: ["8761:8761"]
+
+  gateway:
+    <<: *app
+    build: { context: ., args: { MODULE: gateway } }
+    ports: ["8080:8080"]
+    depends_on: [config-server, service-registry]
+
+  service-offres:
+    <<: *app
+    build: { context: ., args: { MODULE: service-offres } }
+    ports: ["8081:8081"]
+    depends_on: [config-server, service-registry, rabbitmq]
+
+  service-candidatures:
+    <<: *app
+    build: { context: ., args: { MODULE: service-candidatures } }
+    ports: ["8082:8082"]
+    depends_on: [config-server, service-registry, rabbitmq]
+
+  service-talents:
+    <<: *app
+    build: { context: ., args: { MODULE: service-talents } }
+    ports: ["8083:8083"]
+    depends_on: [config-server, service-registry, rabbitmq]
