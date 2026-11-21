@@ -7,10 +7,14 @@ import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.retry.MessageRecoverer;
+import org.springframework.amqp.rabbit.retry.RepublishMessageRecoverer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +41,10 @@ public class RabbitConfig {
     public static final String RK_APPLICATION_SUBMITTED = "application.submitted";
     public static final String RK_INTERVIEW_COMPLETED = "interview.completed";
     public static final String RK_APPLICATION_ACCEPTED = "application.accepted";
+
+    /** Dead letter : propres a talents (pas un contrat partage). Les messages en echec y sont conserves. */
+    public static final String DLX = "talents.dlx";
+    public static final String DLQ = "talents.dlq";
 
     @Bean
     public TopicExchange hireflowExchange() {
@@ -71,6 +79,33 @@ public class RabbitConfig {
     @Bean
     public Binding bindingApplicationAccepted(TopicExchange hireflowExchange) {
         return BindingBuilder.bind(queueApplicationAccepted()).to(hireflowExchange).with(RK_APPLICATION_ACCEPTED);
+    }
+
+    /** Exchange "fanout" : envoie tout ce qu'il recoit a la DLQ, quelle que soit la routing key. */
+    @Bean
+    public FanoutExchange talentsDeadLetterExchange() {
+        return new FanoutExchange(DLX, true, false);
+    }
+
+    @Bean
+    public Queue talentsDeadLetterQueue() {
+        return new Queue(DLQ, true);
+    }
+
+    @Bean
+    public Binding bindingDeadLetter() {
+        return BindingBuilder.bind(talentsDeadLetterQueue()).to(talentsDeadLetterExchange());
+    }
+
+    /**
+     * Utilise par Spring Boot a la fin du retry (spring.rabbitmq.listener.simple.retry.*, dans config-repo) :
+     * apres le dernier essai, le message est republie dans talents.dlq avec la cause de l'erreur
+     * en en-tete (x-exception-message, x-exception-stacktrace, x-original-routingKey).
+     * Les 3 files ci-dessus ne changent pas.
+     */
+    @Bean
+    public MessageRecoverer messageRecoverer(AmqpTemplate amqpTemplate) {
+        return new RepublishMessageRecoverer(amqpTemplate, DLX);
     }
 
     @Bean

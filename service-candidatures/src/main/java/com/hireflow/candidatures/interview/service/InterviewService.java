@@ -12,6 +12,7 @@ import com.hireflow.candidatures.interview.dto.EvaluationRequest;
 import com.hireflow.candidatures.interview.dto.InterviewRequest;
 import com.hireflow.candidatures.interview.dto.InterviewResponse;
 import com.hireflow.candidatures.interview.entite.Interview;
+import com.hireflow.candidatures.interview.messaging.InterviewEventProducer;
 import com.hireflow.candidatures.interview.repository.InterviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class InterviewService {
+
     private final InterviewRepository interviews;
     private final ApplicationService applicationService; // code écrit avec Yasmine au kick-off
     private final TalentClient talentClient; // le vrai Feign, ou TalentClientFake avec "fake"
+    private final InterviewEventProducer events;
+
     /** Planifier : RG1 à RG5. */
     public InterviewResponse planifier(Long applicationId, InterviewRequest req) {
         Application app = applicationService.passerEnEntretien(applicationId); // 404 si inconnue, 409 si décidée
@@ -35,12 +39,13 @@ public class InterviewService {
                 .build());
         return InterviewResponse.from(interview, CandidateSummary.from(profil));
     }
+
     @Transactional(readOnly = true)
     public List<InterviewResponse> lister(Long applicationId) {
         applicationService.getEntity(applicationId); // 404 si inconnue
-        return
-                interviews.findByApplicationId(applicationId).stream().map(InterviewResponse::from).toList();
+        return interviews.findByApplicationId(applicationId).stream().map(InterviewResponse::from).toList();
     }
+
     @Transactional(readOnly = true)
     public InterviewResponse findById(Long id) {
         return InterviewResponse.from(getEntity(id));
@@ -63,8 +68,10 @@ public class InterviewService {
         }
         interview.setNote(req.note());
         interview.setAvis(req.avis());
+        events.interviewCompleted(interview);
         return InterviewResponse.from(interview);
     }
+
     /** Annuler : RG10. */
     public void annuler(Long id) {
         Interview interview = getEntity(id);
