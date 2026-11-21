@@ -10,6 +10,8 @@ import com.hireflow.talents.repository.CandidateRepository;
 import com.hireflow.talents.repository.ScreeningTestRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -61,6 +63,19 @@ class CandidateServiceTest {
 
         assertEquals(CandidateStatus.EN_PROCESSUS, c.getStatut());
         verify(candidates, never()).save(any());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"nadia.email.com", "nadia@", "@email.com", "nadia@email", "nadia @email.com", "nadia@@email.com", ""})
+    void rabbit_emailMalForme_refuseSansRienEnregistrer(String email) {
+        assertThrows(IllegalArgumentException.class, () -> service.creerOuMettreAJour(email));
+        verifyNoInteractions(candidates);
+    }
+
+    @Test
+    void rabbit_emailAbsent_refuseSansRienEnregistrer() {
+        assertThrows(IllegalArgumentException.class, () -> service.creerOuMettreAJour(null));
+        verifyNoInteractions(candidates);
     }
 
     @Test

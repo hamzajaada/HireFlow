@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,9 @@ public class CandidateService {
 
     private final CandidateRepository candidates;
     private final ScreeningTestRepository tests;
+
+    /** Email reçu par RabbitMQ : texte@texte.texte, sans espace ni deuxième @ (ex. amine@email.com). */
+    private static final Pattern EMAIL_VALIDE = Pattern.compile("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$");
 
     /** RG1, RG2 : email obligatoire et unique (sans tenir compte des majuscules). */
     public CandidateResponse creer(CandidateRequest req) {
@@ -85,6 +89,9 @@ public class CandidateService {
 
     /** RG5 : appelé par RabbitMQ. Trouve le candidat par email, ou le crée avec un nom provisoire. */
     public Candidate creerOuMettreAJour(String email) {
+        if (email == null || !EMAIL_VALIDE.matcher(email).matches()) {   // message mal formé : on n'enregistre rien
+            throw new IllegalArgumentException("Email invalide reçu par RabbitMQ : " + email);
+        }
         Candidate c = candidates.findByEmailIgnoreCase(email).orElseGet(() -> {
             log.info("Nouveau candidat créé depuis RabbitMQ : {}", email);
             return candidates.save(Candidate.builder()
