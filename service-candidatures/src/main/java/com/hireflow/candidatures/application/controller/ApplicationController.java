@@ -1,5 +1,6 @@
 package com.hireflow.candidatures.application.controller;
 
+import com.hireflow.candidatures.application.dto.ApplicationCard;
 import com.hireflow.candidatures.application.dto.ApplicationRequest;
 import com.hireflow.candidatures.application.dto.ApplicationResponse;
 import com.hireflow.candidatures.application.dto.StatusChangeRequest;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/applications")
@@ -37,6 +39,12 @@ public class ApplicationController {
     public List<ApplicationResponse> list(@RequestParam(required = false) Long offerId,
                                           @RequestParam(required = false) ApplicationStatus statut) {
         return service.findAll(offerId, statut);
+    }
+
+    /** Le Kanban (sprint 2). Spring préfère le chemin fixe /pipeline à /{id}. */
+    @GetMapping("/pipeline")
+    public Map<ApplicationStatus, List<ApplicationCard>> pipeline(@RequestParam(required = false) Long offerId) {
+        return service.pipeline(offerId);
     }
 
     @GetMapping("/{id}")
