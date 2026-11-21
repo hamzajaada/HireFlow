@@ -39,6 +39,8 @@ Hire-Flow/
 └── docker-compose.yml       RabbitMQ + console d'administration             membre 4
 ```
 
+Détail de chaque service dans son propre README : [service-talents](service-talents/README.md).
+
 Chaque service suit l'organisation de packages du TP :
 `entite` (entités JPA), `enums`, `repository`, `dto`, `config` (RabbitConfig), puis à créer par chacun : `mapper` (MapStruct), `service`, `controller`, `exception`, `feignClient` (clients Feign + `ResilientRequests`), `messaging` (publisher / consumer RabbitMQ).
 
