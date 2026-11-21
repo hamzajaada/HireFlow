@@ -73,6 +73,26 @@ public class JobOfferService {
                         "Compétence " + skillId + " introuvable sur l'offre " + id));
         offer.getRequiredSkills().remove(skill);            // orphanRemoval = true supprime la ligne
     }
+    // ---------- appelés par les listeners RabbitMQ (sprint 2) ----------
+
+    /** RG8 : un entretien noté met à jour le nombre d'entretiens et la note moyenne. */
+    public void enregistrerEntretien(Long offerId, Integer note) {
+        JobOffer offer = getEntity(offerId);
+        int n = offer.getNombreEntretiens() == null ? 0 : offer.getNombreEntretiens();
+        double ancienneMoyenne = offer.getNoteMoyenne() == null ? 0 : offer.getNoteMoyenne();
+        offer.setNoteMoyenne((ancienneMoyenne * n + note) / (n + 1));
+        offer.setNombreEntretiens(n + 1);
+    }
+
+    /** RG9 et RG10 : une candidature retenue ferme l'offre ; déjà fermée = on ne fait rien. */
+    public void cloturer(Long offerId) {
+        JobOffer offer = getEntity(offerId);
+        if (offer.getStatut() == OfferStatus.POURVUE) {
+            return;                                         // message reçu deux fois : rien à faire
+        }
+        offer.setStatut(OfferStatus.POURVUE);
+    }
+
     /** Utilisé aussi par EligibilityService. */
     public JobOffer getEntity(Long id) {
         return offers.findById(id)

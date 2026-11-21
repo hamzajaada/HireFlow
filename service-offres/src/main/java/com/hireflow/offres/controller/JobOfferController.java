@@ -3,6 +3,7 @@ import com.hireflow.offres.dto.EligibilityRequest;
 import com.hireflow.offres.dto.EligibilityResponse;
 import com.hireflow.offres.dto.JobOfferRequest;
 import com.hireflow.offres.dto.JobOfferResponse;
+import com.hireflow.offres.dto.OfferProgressResponse;
 import com.hireflow.offres.dto.SkillRequest;
 import com.hireflow.offres.dto.SkillResponse;
 import com.hireflow.offres.enums.OfferStatus;
@@ -66,5 +67,12 @@ public class JobOfferController {
     @PostMapping("/{id}/eligibility")
     public EligibilityResponse eligibility(@PathVariable Long id, @RequestBody EligibilityRequest req) {
         return eligibility.verifier(id, req);
+    }
+
+    /** Avancement du recrutement (RG8) : nombre d'entretiens notés et note moyenne. */
+    @GetMapping("/{id}/progress")
+    public OfferProgressResponse progress(@PathVariable Long id) {
+        JobOfferResponse o = service.findById(id);
+        return new OfferProgressResponse(o.id(), o.statut(), o.nombreEntretiens(), o.noteMoyenne());
     }
 }
