@@ -18,10 +18,8 @@ bin/
 .DS_Store
 Thumbs.db
 
-# Angular (bonus)
+# Node (newman)
 node_modules/
-dist/
-.angular/
 
 .env
 
