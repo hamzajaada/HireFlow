@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "caa33bf2-2708-437a-b829-550247a47d16",
     "name": "Hire-Flow",
-    "description": "Collection de l'équipe Hire-Flow (Hamza, Douae, Yasmine, Abderahman). Toutes les requêtes passent par la Gateway {{gw}}.\n\nPrérequis : RabbitMQ (docker compose up -d), Config Server, Eureka, Gateway, puis les 3 services SANS profil fake.\n\nLes dossiers 1 à 4 se lancent dans l'ordre ; le dossier 5 est le scénario de démo.",
+    "description": "Collection de l'équipe Hire-Flow (Hamza, Douae, Yasmine, Abderahman). Toutes les requêtes passent par la Gateway {{gw}}.\n\nPrérequis : RabbitMQ et Mailpit (docker compose up -d), Config Server, Eureka, Gateway, puis les 4 services SANS profil fake.\n\nLes dossiers 1 à 4 se lancent dans l'ordre ; le dossier 5 est le scénario de démo ; le dossier 6 vérifie les notifications et les emails.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "event": [
@@ -80,10 +80,8 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "http://localhost:8761/eureka/apps"
-            },
-            "description": "Doit lister GATEWAY, SERVICE-OFFRES, SERVICE-TALENTS, SERVICE-CANDIDATURES. Interface web : http://localhost:8761"
+            "url": "http://localhost:8761/eureka/apps",
+            "description": "Doit lister GATEWAY, SERVICE-OFFRES, SERVICE-TALENTS, SERVICE-CANDIDATURES, SERVICE-NOTIFICATION. Interface web : http://localhost:8761"
           },
           "event": [
             {
@@ -102,9 +100,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "http://localhost:8888/service-candidatures/default"
-            },
+            "url": "http://localhost:8888/service-candidatures/default",
             "description": ""
           },
           "event": [
@@ -120,7 +116,7 @@
           ]
         },
         {
-          "name": "Gateway : CORS pour Angular (Yasmine)",
+          "name": "Gateway : CORS (front web)",
           "request": {
             "method": "OPTIONS",
             "header": [
@@ -133,9 +129,7 @@
                 "value": "GET"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/offers"
-            },
+            "url": "{{gw}}/offers",
             "description": "Attendu : en-tête Access-Control-Allow-Origin: http://localhost:4200"
           },
           "event": [
@@ -162,9 +156,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/offers"
-            },
+            "url": "{{gw}}/offers",
             "description": ""
           },
           "event": [
@@ -184,9 +176,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/offers?statut=OUVERTE"
-            },
+            "url": "{{gw}}/offers?statut=OUVERTE",
             "description": ""
           },
           "event": [
@@ -206,9 +196,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/offers/1"
-            },
+            "url": "{{gw}}/offers/1",
             "description": ""
           },
           "event": [
@@ -228,9 +216,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/offers/999"
-            },
+            "url": "{{gw}}/offers/999",
             "description": ""
           },
           "event": [
@@ -255,9 +241,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/offers"
-            },
+            "url": "{{gw}}/offers",
             "description": "",
             "body": {
               "mode": "raw",
@@ -292,9 +276,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/offers"
-            },
+            "url": "{{gw}}/offers",
             "description": "",
             "body": {
               "mode": "raw",
@@ -328,9 +310,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/offers/{{offerId}}"
-            },
+            "url": "{{gw}}/offers/{{offerId}}",
             "description": "",
             "body": {
               "mode": "raw",
@@ -364,9 +344,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/offers/3"
-            },
+            "url": "{{gw}}/offers/3",
             "description": "",
             "body": {
               "mode": "raw",
@@ -400,9 +378,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/offers/{{offerId}}/skills"
-            },
+            "url": "{{gw}}/offers/{{offerId}}/skills",
             "description": "",
             "body": {
               "mode": "raw",
@@ -432,9 +408,7 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/offers/{{offerId}}/skills/{{skillId}}"
-            },
+            "url": "{{gw}}/offers/{{offerId}}/skills/{{skillId}}",
             "description": ""
           },
           "event": [
@@ -459,9 +433,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/offers/1/eligibility"
-            },
+            "url": "{{gw}}/offers/1/eligibility",
             "description": "Appelé par le Feign ① de Yasmine. Attendu : eligible = true",
             "body": {
               "mode": "raw",
@@ -496,9 +468,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/offers/2/eligibility"
-            },
+            "url": "{{gw}}/offers/2/eligibility",
             "description": "Attendu : competencesManquantes = Angular, TypeScript ; eligible = false",
             "body": {
               "mode": "raw",
@@ -532,9 +502,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/offers/3/eligibility"
-            },
+            "url": "{{gw}}/offers/3/eligibility",
             "description": "Attendu : ouverte = false",
             "body": {
               "mode": "raw",
@@ -563,9 +531,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/offers/1/progress"
-            },
+            "url": "{{gw}}/offers/1/progress",
             "description": "Sprint 2 (Hamza) : alimenté par interview.completed. 404 tant qu'il n'est pas livré."
           },
           "event": [
@@ -585,9 +551,7 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/offers/{{offerId}}"
-            },
+            "url": "{{gw}}/offers/{{offerId}}",
             "description": ""
           },
           "event": [
@@ -613,9 +577,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/candidates"
-            },
+            "url": "{{gw}}/candidates",
             "description": ""
           },
           "event": [
@@ -635,9 +597,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/candidates?statut=EN_PROCESSUS"
-            },
+            "url": "{{gw}}/candidates?statut=EN_PROCESSUS",
             "description": ""
           },
           "event": [
@@ -657,9 +617,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/candidates/1"
-            },
+            "url": "{{gw}}/candidates/1",
             "description": ""
           },
           "event": [
@@ -679,9 +637,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/candidates/by-email/amine@email.com"
-            },
+            "url": "{{gw}}/candidates/by-email/amine@email.com",
             "description": ""
           },
           "event": [
@@ -701,9 +657,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/candidates/by-email/amine@email.com/profile"
-            },
+            "url": "{{gw}}/candidates/by-email/amine@email.com/profile",
             "description": "Attendu : dernierTest Java, dernierScore 78"
           },
           "event": [
@@ -723,9 +677,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/candidates/by-email/inconnu@email.com/profile"
-            },
+            "url": "{{gw}}/candidates/by-email/inconnu@email.com/profile",
             "description": ""
           },
           "event": [
@@ -750,9 +702,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/candidates"
-            },
+            "url": "{{gw}}/candidates",
             "description": "",
             "body": {
               "mode": "raw",
@@ -796,9 +746,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/candidates"
-            },
+            "url": "{{gw}}/candidates",
             "description": "",
             "body": {
               "mode": "raw",
@@ -832,9 +780,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/candidates"
-            },
+            "url": "{{gw}}/candidates",
             "description": "",
             "body": {
               "mode": "raw",
@@ -868,9 +814,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/candidates/{{candidateId}}"
-            },
+            "url": "{{gw}}/candidates/{{candidateId}}",
             "description": "",
             "body": {
               "mode": "raw",
@@ -904,9 +848,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/candidates/{{candidateId}}/tests"
-            },
+            "url": "{{gw}}/candidates/{{candidateId}}/tests",
             "description": "",
             "body": {
               "mode": "raw",
@@ -940,9 +882,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/candidates/{{candidateId}}/tests"
-            },
+            "url": "{{gw}}/candidates/{{candidateId}}/tests",
             "description": "",
             "body": {
               "mode": "raw",
@@ -971,9 +911,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/candidates/{{candidateId}}/tests"
-            },
+            "url": "{{gw}}/candidates/{{candidateId}}/tests",
             "description": ""
           },
           "event": [
@@ -993,9 +931,7 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/candidates/{{candidateId}}"
-            },
+            "url": "{{gw}}/candidates/{{candidateId}}",
             "description": ""
           },
           "event": [
@@ -1021,9 +957,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/applications"
-            },
+            "url": "{{gw}}/applications",
             "description": ""
           },
           "event": [
@@ -1043,9 +977,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/applications?offerId=1&statut=DEPOSEE"
-            },
+            "url": "{{gw}}/applications?offerId=1&statut=DEPOSEE",
             "description": ""
           },
           "event": [
@@ -1065,9 +997,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/applications/1"
-            },
+            "url": "{{gw}}/applications/1",
             "description": ""
           },
           "event": [
@@ -1087,9 +1017,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/applications/999"
-            },
+            "url": "{{gw}}/applications/999",
             "description": ""
           },
           "event": [
@@ -1114,9 +1042,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications"
-            },
+            "url": "{{gw}}/applications",
             "description": "Publie aussi application.submitted : service-talents crée le profil du candidat.",
             "body": {
               "mode": "raw",
@@ -1156,9 +1082,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/candidates/by-email/{{candEmail}}"
-            },
+            "url": "{{gw}}/candidates/by-email/{{candEmail}}",
             "description": "Preuve que application.submitted est arrivé chez Douae. Si 404, attendre 2 s et relancer."
           },
           "event": [
@@ -1168,6 +1092,15 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('HTTP 200', () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "setTimeout(() => {}, 3000);"
                 ]
               }
             }
@@ -1183,9 +1116,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications"
-            },
+            "url": "{{gw}}/applications",
             "description": "",
             "body": {
               "mode": "raw",
@@ -1219,9 +1150,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications"
-            },
+            "url": "{{gw}}/applications",
             "description": "Le message cite Angular et TypeScript : ce sont les compétences de la base de Hamza (Feign ① réel).",
             "body": {
               "mode": "raw",
@@ -1255,9 +1184,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications"
-            },
+            "url": "{{gw}}/applications",
             "description": "",
             "body": {
               "mode": "raw",
@@ -1291,9 +1218,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications"
-            },
+            "url": "{{gw}}/applications",
             "description": "",
             "body": {
               "mode": "raw",
@@ -1327,9 +1252,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications"
-            },
+            "url": "{{gw}}/applications",
             "description": "",
             "body": {
               "mode": "raw",
@@ -1363,9 +1286,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications/3/status"
-            },
+            "url": "{{gw}}/applications/3/status",
             "description": "RG7 : seule une candidature EN_ENTRETIEN peut être décidée.",
             "body": {
               "mode": "raw",
@@ -1399,9 +1320,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications/1/status"
-            },
+            "url": "{{gw}}/applications/1/status",
             "description": "RG6 : seules RETENUE et REFUSEE sont des décisions.",
             "body": {
               "mode": "raw",
@@ -1430,9 +1349,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/applications/pipeline?offerId=1"
-            },
+            "url": "{{gw}}/applications/pipeline?offerId=1",
             "description": "Sprint 2 (Yasmine) : candidatures groupées par statut."
           },
           "event": [
@@ -1463,9 +1380,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications/{{applicationId}}/interviews"
-            },
+            "url": "{{gw}}/applications/{{applicationId}}/interviews",
             "description": "La candidature passe EN_ENTRETIEN. La réponse contient le résumé du candidat (Feign ②).",
             "body": {
               "mode": "raw",
@@ -1495,9 +1410,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/applications/{{applicationId}}"
-            },
+            "url": "{{gw}}/applications/{{applicationId}}",
             "description": ""
           },
           "event": [
@@ -1523,9 +1436,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications/{{applicationId}}/interviews"
-            },
+            "url": "{{gw}}/applications/{{applicationId}}/interviews",
             "description": "",
             "body": {
               "mode": "raw",
@@ -1554,9 +1465,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/applications/{{applicationId}}/interviews"
-            },
+            "url": "{{gw}}/applications/{{applicationId}}/interviews",
             "description": ""
           },
           "event": [
@@ -1576,9 +1485,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/interviews/{{interviewId}}"
-            },
+            "url": "{{gw}}/interviews/{{interviewId}}",
             "description": ""
           },
           "event": [
@@ -1603,9 +1510,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/interviews/{{interviewId}}/evaluation"
-            },
+            "url": "{{gw}}/interviews/{{interviewId}}/evaluation",
             "description": "",
             "body": {
               "mode": "raw",
@@ -1639,9 +1544,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/interviews/{{interviewId}}/evaluation"
-            },
+            "url": "{{gw}}/interviews/{{interviewId}}/evaluation",
             "description": "Publie interview.completed (sprint 2).",
             "body": {
               "mode": "raw",
@@ -1675,9 +1578,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/interviews/{{interviewId}}/evaluation"
-            },
+            "url": "{{gw}}/interviews/{{interviewId}}/evaluation",
             "description": "",
             "body": {
               "mode": "raw",
@@ -1706,9 +1607,7 @@
           "request": {
             "method": "DELETE",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/interviews/{{interviewId}}"
-            },
+            "url": "{{gw}}/interviews/{{interviewId}}",
             "description": ""
           },
           "event": [
@@ -1733,9 +1632,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications/{{applicationId}}/status"
-            },
+            "url": "{{gw}}/applications/{{applicationId}}/status",
             "description": "On refuse ici pour ne pas clôturer l'offre 1 (sinon les dépôts suivants sur l'offre 1 seraient refusés). Le cas RETENUE est dans le dossier 5, sur une offre créée exprès.",
             "body": {
               "mode": "raw",
@@ -1776,9 +1673,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/offers"
-            },
+            "url": "{{gw}}/offers",
             "description": "",
             "body": {
               "mode": "raw",
@@ -1822,9 +1717,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications"
-            },
+            "url": "{{gw}}/applications",
             "description": "",
             "body": {
               "mode": "raw",
@@ -1854,9 +1747,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/candidates/by-email/{{demoEmail}}"
-            },
+            "url": "{{gw}}/candidates/by-email/{{demoEmail}}",
             "description": ""
           },
           "event": [
@@ -1890,9 +1781,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications/{{demoApplicationId}}/interviews"
-            },
+            "url": "{{gw}}/applications/{{demoApplicationId}}/interviews",
             "description": "",
             "body": {
               "mode": "raw",
@@ -1927,9 +1816,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/interviews/{{demoInterviewId}}/evaluation"
-            },
+            "url": "{{gw}}/interviews/{{demoInterviewId}}/evaluation",
             "description": "",
             "body": {
               "mode": "raw",
@@ -1963,9 +1850,7 @@
                 "value": "application/json"
               }
             ],
-            "url": {
-              "raw": "{{gw}}/applications/{{demoApplicationId}}/status"
-            },
+            "url": "{{gw}}/applications/{{demoApplicationId}}/status",
             "description": "",
             "body": {
               "mode": "raw",
@@ -1994,9 +1879,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/offers/{{demoOfferId}}"
-            },
+            "url": "{{gw}}/offers/{{demoOfferId}}",
             "description": ""
           },
           "event": [
@@ -2026,9 +1909,7 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{gw}}/candidates/by-email/{{demoEmail}}"
-            },
+            "url": "{{gw}}/candidates/by-email/{{demoEmail}}",
             "description": "Le statut du candidat doit avoir avancé après application.accepted."
           },
           "event": [
@@ -2038,6 +1919,211 @@
                 "type": "text/javascript",
                 "exec": [
                   "pm.test('HTTP 200', () => pm.expect(pm.response.code).to.be.oneOf([200]));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "6. Notifications (Yasmine · service-notification + Mailpit)",
+      "description": "Prérequis : Mailpit lancé (docker compose up -d) et service-notification démarré. À lancer après le dossier 5.",
+      "item": [
+        {
+          "name": "Envoyer un email de test → 204",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{gw}}/notifications/email",
+            "description": "L'email doit apparaître dans Mailpit : http://localhost:8025",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destinataire\": \"test@hireflow.local\",\n  \"objet\": \"Test Postman\",\n  \"contenu\": \"Email envoyé depuis la collection Postman.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 204', () => pm.expect(pm.response.code).to.be.oneOf([204]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Email avec une adresse invalide → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{gw}}/notifications/email",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destinataire\": \"pas-un-email\",\n  \"objet\": \"Test\",\n  \"contenu\": \"Test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Email avec un objet vide → 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{gw}}/notifications/email",
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"destinataire\": \"test@hireflow.local\",\n  \"objet\": \"\",\n  \"contenu\": \"Test\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400', () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Historique de toutes les notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{gw}}/notifications",
+            "description": "Rempli par les événements RabbitMQ des dossiers 3 à 5."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.expect(pm.response.code).to.be.oneOf([200]));",
+                  "pm.test('au moins une notification', () => pm.expect(pm.response.json().length).to.be.above(0));"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "setTimeout(() => {}, 2000);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Notifications du candidat de la démo (submitted + accepted)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{gw}}/notifications?destinataire={{demoEmail}}",
+            "description": "Après le dossier 5 : le candidat a reçu l'accusé de réception (application.submitted) et les félicitations (application.accepted)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.expect(pm.response.code).to.be.oneOf([200]));",
+                  "const types = pm.response.json().map(n => n.type);",
+                  "pm.test('accusé de réception reçu', () => pm.expect(types).to.include('CANDIDATURE_RECUE'));",
+                  "pm.test('candidat retenu reçu', () => pm.expect(types).to.include('CANDIDAT_RETENU'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Notifications des RH (nouvelle candidature + entretien noté)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{gw}}/notifications?destinataire=rh@hireflow.local",
+            "description": ""
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.expect(pm.response.code).to.be.oneOf([200]));",
+                  "const types = pm.response.json().map(n => n.type);",
+                  "pm.test('nouvelle candidature reçue', () => pm.expect(types).to.include('CANDIDATURE_RECUE'));",
+                  "pm.test('entretien noté reçu', () => pm.expect(types).to.include('ENTRETIEN_NOTE'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Mailpit a bien reçu les emails (SMTP)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "http://localhost:8025/api/v1/messages",
+            "description": "API de Mailpit (hors Gateway). Boîte de réception web : http://localhost:8025"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', () => pm.expect(pm.response.code).to.be.oneOf([200]));",
+                  "pm.test('emails présents dans Mailpit', () => pm.expect(pm.response.json().total).to.be.above(0));"
                 ]
               }
             }
